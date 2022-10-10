@@ -23,3 +23,28 @@ def read_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
         if not reader.fieldnames:
             raise SystemExit("CSV has no header row.")
         headers = [normalize_header(h) for h in reader.fieldnames]
+        rows: list[dict[str, str]] = []
+        for raw in reader:
+            row = {
+                normalize_header(key): normalize_cell(value or "")
+                for key, value in raw.items()
+                if key is not None
+            }
+            rows.append(row)
+    return headers, rows
+
+
+def drop_empty_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    cleaned = []
+    for row in rows:
+        if any(value for value in row.values()):
+            cleaned.append(row)
+    return cleaned
+
+
+def summarize(headers: list[str], rows: list[dict[str, str]]) -> None:
+    print(f"rows: {len(rows)}")
+    print(f"columns: {', '.join(headers)}")
+    for header in headers:
+        blank = sum(1 for row in rows if not row.get(header))
+        values = Counter(row.get(header, "") for row in rows if row.get(header))
