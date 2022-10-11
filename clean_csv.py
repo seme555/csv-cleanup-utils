@@ -48,3 +48,28 @@ def summarize(headers: list[str], rows: list[dict[str, str]]) -> None:
     for header in headers:
         blank = sum(1 for row in rows if not row.get(header))
         values = Counter(row.get(header, "") for row in rows if row.get(header))
+        top = values.most_common(3)
+        top_text = ", ".join(f"{value} ({count})" for value, count in top) or "n/a"
+        print(f"- {header}: blank={blank}, top={top_text}")
+
+
+def write_csv(path: Path, headers: list[str], rows: list[dict[str, str]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=headers)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({header: row.get(header, "") for header in headers})
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Clean and summarize a CSV file.")
+    parser.add_argument("input", help="Input CSV path")
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Optional cleaned CSV output path",
+    )
+    parser.add_argument(
+        "--summary-only",
+        action="store_true",
