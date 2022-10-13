@@ -73,3 +73,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--summary-only",
         action="store_true",
+        help="Print summary without writing an output file",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    input_path = Path(args.input)
+    headers, rows = read_rows(input_path)
+    rows = drop_empty_rows(rows)
+    summarize(headers, rows)
+
+    if args.summary_only:
+        return
+
+    output_path = Path(args.output) if args.output else input_path.with_name(
+        f"{input_path.stem}_clean.csv"
+    )
+    write_csv(output_path, headers, rows)
+    print(f"wrote: {output_path}")
+
+
+if __name__ == "__main__":
+    main()
