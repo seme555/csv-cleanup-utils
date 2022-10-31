@@ -15,3 +15,12 @@ Small Python CLI tools for validating, normalizing, and summarizing tabular CSV 
 ```bash
 # summary + write cleaned file
 python clean_csv.py sample_messy.csv
+
+# summary only
+python clean_csv.py sample_messy.csv --summary-only
+
+# custom output path
+python clean_csv.py sample_messy.csv -o output/clean.csv
+```
+
+## Author
