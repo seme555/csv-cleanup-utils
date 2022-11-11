@@ -24,3 +24,9 @@ python clean_csv.py sample_messy.csv -o output/clean.csv
 ```
 
 ## Author
+
+Semere Abera — [github.com/seme555](https://github.com/seme555)
+
+## License
+
+MIT
